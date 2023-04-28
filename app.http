@@ -1,0 +1,22 @@
+//Register API
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "username": "pavan_kalyan",
+  "name": "Pavan kalyan",
+  "password": "pavan@2023",
+  "gender": "male",
+  "location": "Srikakulam",
+  "usertype": "coustomer"
+}
+###
+
+//Login API
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "username": "adam_richard",
+  "password": "richard_567"
+}
