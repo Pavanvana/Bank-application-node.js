@@ -93,6 +93,7 @@ app.post("/login", async (request, response) => {
       };
       const jwtToken = jwt.sign(payload, "MY_SECRET_TOKEN");
       response.send({ jwtToken });
+      console.log(jwtToken);
     } else {
       response.status(400);
       response.send("Invalid password");
@@ -121,8 +122,50 @@ function authenticationToken(request, response, next) {
   }
 }
 
-app.post("/users/", authenticationToken, async (request, response) => {
-  const {} = request.body;
+//Accounts API
+
+app.post("/accounts", authenticationToken, async (request, response) => {
+  const { accountBalance, username, transactiontype, amount } = request.body;
+  const selectUserQuery = `
+    SELECT 
+      * 
+    FROM 
+      users 
+    WHERE 
+      username = '${username}'`;
+  const dbUser = await db.get(selectUserQuery);
+  if (dbUser !== undefined) {
+    const addDate = `
+            INSERT INTO 
+                accounts(accountBalance, username, transactiontype, amount)
+            VALUES(
+                '${accountBalance}',
+                '${username}',
+                '${transactiontype}',
+                '${amount}'
+            )`;
+    const dbResponse = await db.run(addDate);
+    response.send("Data added successfully");
+  } else {
+    response.status(400);
+    response.send("user not defined");
+  }
+});
+
+//Transaction API
+
+app.post("/transactions", authenticationToken, async (request, response) => {
+  const { username, transactiontype, amount } = request.body;
+  const transactionQuery = `
+            INSERT INTO 
+                transactions(username, transactiontype, amount)
+            VALUES(
+                '${username}',
+                '${transactiontype}',
+                '${amount}'
+            )`;
+  const dbResponse = await db.run(transactionQuery);
+  response.send("Transaction added successfully");
 });
 
 module.exports = app;
